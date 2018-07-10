@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+    apache:
+        build: apache
+        volumes:
+            - ${SYMFONY_APP_PATH}:/var/www/back
+            - ${FRONT_PATH}:/var/www/front
+        ports:
+            - 8081:80
