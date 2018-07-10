@@ -8,3 +8,10 @@ services:
             - ${FRONT_PATH}:/var/www/front
         ports:
             - 8081:80
+    db:
+        image: postgres:10.4
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        ports:
+            - 5533:5432
