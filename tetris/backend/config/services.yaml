@@ -28,6 +28,10 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    App\Service\PlayerService:
+        arguments:
+            $secret: 'def000004ba8fee5d13ac2b2d8f13d3762bd732df2513df86da00f96da48c36623de3fe1bd45d0e63b82066fe31ccd1f090883d60312c989cd4893797b143c4a33495263'
+
     get_set_method_normalizer:
         class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
         public: false
