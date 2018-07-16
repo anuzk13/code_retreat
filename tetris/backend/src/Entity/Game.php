@@ -9,6 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Game
 {
+    CONST ACTIVE_PLAYER_ONE = 1;
+    CONST ACTIVE_PLAYER_TWO = 2;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -26,11 +29,6 @@ class Game
      * @ORM\ManyToOne(targetEntity="App\Entity\Player")
      */
     private $playerTwo;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Player")
-     */
-    private $activePlayer;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Board", cascade={"persist", "remove"})
@@ -52,6 +50,11 @@ class Game
      * @ORM\Column(type="boolean")
      */
     private $active;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $activePlayer;
 
     public function getId()
     {
@@ -78,18 +81,6 @@ class Game
     public function setPlayerTwo(?Player $playerTwo): self
     {
         $this->playerTwo = $playerTwo;
-
-        return $this;
-    }
-
-    public function getActivePlayer(): ?Player
-    {
-        return $this->activePlayer;
-    }
-
-    public function setActivePlayer(?Player $activePlayer): self
-    {
-        $this->activePlayer = $activePlayer;
 
         return $this;
     }
@@ -138,6 +129,18 @@ class Game
     public function setActive(bool $active): self
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    public function getActivePlayer(): ?int
+    {
+        return $this->activePlayer;
+    }
+
+    public function setActivePlayer(int $activePlayer): self
+    {
+        $this->activePlayer = $activePlayer;
 
         return $this;
     }

@@ -35,6 +35,7 @@ class GameService
                     $board->setPositions([]);
                     $game = new Game();
                     $game->setActive(true);
+                    $game->setActivePlayer(Game::ACTIVE_PLAYER_ONE);
                     $game->setPlayerOne($player);
                     $game->setBoard($board);
                 }
