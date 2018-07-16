@@ -1,8 +1,7 @@
 import * as FetchService from './fetch_service.js';
 
-let game;
 
-function loadGame() {
+const loadGame = () => {
     const hash = new URL(window.location.href).hash.substring(1);
     try {
         const pData = hash ? JSON.parse(decodeURIComponent(hash)) : null;
@@ -11,15 +10,12 @@ function loadGame() {
             FetchService.setToken(pToken);
             const gameId = pData.gameId;
             if (gameId) {
-                return FetchService.getData(`game/${gameId}`)
-                .then(response => {
-                    game = response;
-                })
+                return pollGameState(gameId);
             } else {
                 return FetchService.postData('game', {})
-                .then(response => {
-                    game = response;
-                });
+                .then(game => 
+                    pollGameState(game.id)
+                );
             }
         } else {
             window.location.replace(`../..`);
@@ -28,6 +24,23 @@ function loadGame() {
     catch(error) {
         window.location.replace(`../..`);
     }
+}
+
+const pollGameState = (gameId) => {
+    return FetchService.getData(`game/${gameId}`).then(game => {
+        if (game.active) {
+            renderGame(game);
+            return pollGameState(game.id);
+        }
+        else {
+            console.log('game finished')
+            return false;
+        }
+    })
+}
+
+const renderGame = (game) => {
+    console.log(game);
 }
 
 export {loadGame}
