@@ -19,7 +19,7 @@ class GameController extends Controller
     /**
      * @Route("/game", name="new_game"), methods={"POST"}
      */
-    public function newGame(Request $request, GameService $gs)
+    public function newGame(Request $request, GameService $gs, SerializerInterface $serializer)
     {
         $player = $request->attributes->get('_player');
         try {
