@@ -38,8 +38,8 @@ class GameService
                     $game->setActivePlayer(Game::ACTIVE_PLAYER_ONE);
                     $game->setPlayerOne($player);
                     $game->setBoard($board);
+                    $em->persist($board);
                 }
-                $em->persist($board);
                 $em->persist($game);
                 $em->flush();
             });

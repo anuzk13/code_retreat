@@ -26,7 +26,7 @@ class GameRepository extends ServiceEntityRepository
     public function getAvailableGame()
     {
         return $this->createQueryBuilder('g')
-            ->andWhere('g.playerTwo IS NOT NULL')
+            ->andWhere('g.playerOne IS NOT NULL')
             ->andWhere('g.playerTwo IS NULL')
             ->getQuery()
             ->getOneOrNullResult();
