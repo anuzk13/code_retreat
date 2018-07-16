@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Game;
+use App\Entity\Player;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -19,32 +20,25 @@ class GameRepository extends ServiceEntityRepository
         parent::__construct($registry, Game::class);
     }
 
-//    /**
-//     * @return Game[] Returns an array of Game objects
-//     */
-    /*
-    public function findByExampleField($value)
+   /**
+    * @return Game|null
+    */
+    public function getAvailableGame()
     {
         return $this->createQueryBuilder('g')
-            ->andWhere('g.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('g.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('g.playerTwo IS NOT NULL')
+            ->andWhere('g.playerTwo IS NULL')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getOneOrNullResult();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Game
+    public function getActiveGame(Player $player)
     {
         return $this->createQueryBuilder('g')
-            ->andWhere('g.exampleField = :val')
-            ->setParameter('val', $value)
+            ->where('g.playerOne = :player_id AND g.active = TRUE')
+            ->orWhere('g.playerTwo = :player_id AND g.active = TRUE')
+            ->setParameter('player_id',  $player->getId())
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
-    */
 }
