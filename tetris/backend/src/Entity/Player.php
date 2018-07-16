@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PlayerRepository")
+ * @ORM\Table(name="player",uniqueConstraints={@UniqueConstraint(name="name", columns={"name"})})
  */
 class Player
 {
