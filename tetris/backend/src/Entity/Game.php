@@ -48,6 +48,11 @@ class Game
      */
     private $pTwoSymbol;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $active;
+
     public function getId()
     {
         return $this->id;
@@ -121,6 +126,18 @@ class Game
     public function setPTwoSymbol(?string $pTwoSymbol): self
     {
         $this->pTwoSymbol = $pTwoSymbol;
+
+        return $this;
+    }
+
+    public function getActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): self
+    {
+        $this->active = $active;
 
         return $this;
     }
