@@ -9,6 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Board
 {
+    const NOUGHT = 'O';
+    const CROSS = 'X';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
