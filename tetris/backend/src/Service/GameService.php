@@ -46,4 +46,14 @@ class GameService
             return $game;
         }
     }
+
+    public function isCurrentPlayer(Player $player, Game $game) {
+        $playerOneTurn = $game->getActivePlayer() === Game::ACTIVE_PLAYER_ONE;
+        if ($playerOneTurn && $player->getId() === $game->getPlayerOne()->getId()) {
+            return true;
+        }  else if (!$playerOneTurn && $game->getPlayerTwo() && $player->getId() === $game->getPlayerTwo()->getId()) {
+            return true;
+        }
+        return false;
+    }
 }

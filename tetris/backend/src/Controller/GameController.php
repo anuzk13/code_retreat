@@ -34,7 +34,7 @@ class GameController extends Controller
     /**
      * @Route("/game/{id}", name="get_game"), methods={"GET"}
      */
-    public function getGame($id, SerializerInterface $serializer)
+    public function getGame($id, Request $request, GameService $gs, SerializerInterface $serializer)
     {
         $game = $this->getDoctrine()
             ->getRepository(Game::class)
@@ -44,6 +44,9 @@ class GameController extends Controller
                 'No game found for id '.$id
             );
         }
+        $player = $request->attributes->get('_player');
+        $icp = $gs->isCurrentPlayer($player, $game);
+        $game->setIsCurrentPlayer($icp);
         $jsonGame = $serializer->serialize($game, 'json');
         return new Response($jsonGame);
     }

@@ -56,6 +56,8 @@ class Game
      */
     private $activePlayer;
 
+    private $isCurrentPlayer;
+
     public function getId()
     {
         return $this->id;
@@ -143,5 +145,17 @@ class Game
         $this->activePlayer = $activePlayer;
 
         return $this;
+    }
+
+    public function setIsCurrentPlayer(bool $currentPlayer): self
+    {
+        $this->isCurrentPlayer = $currentPlayer;
+
+        return $this;
+    }
+
+    public function getIsCurrentPlayer(): ?bool
+    {
+        return $this->isCurrentPlayer;
     }
 }
