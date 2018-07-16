@@ -1,0 +1,22 @@
+.register {
+    width: 50%;
+    margin-left: 25%;
+    margin-top: 40%;
+}
+
+.input-field div.error{
+    position: relative;
+    text-align: left;
+    top: -1rem;
+    left: 0rem;
+    font-size: 0.8rem;
+    color: #FF4081;
+    -webkit-transform: translateY(5px);
+    -ms-transform: translateY(5px);
+    -o-transform: translateY(5px);
+    transform: translateY(5px);
+}
+
+.invisible {
+    visibility: hidden;
+}
