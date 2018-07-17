@@ -1,7 +1,7 @@
 .register {
     width: 50%;
     margin-left: 25%;
-    margin-top: 40%;
+    margin-top: 50vh;
 }
 
 .input-field div.error{
@@ -19,4 +19,8 @@
 
 .invisible {
     visibility: hidden;
+}
+
+.symbol-select {
+    margin-left: calc(50% - 134px);
 }

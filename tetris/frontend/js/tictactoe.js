@@ -5,8 +5,8 @@ function registerPlayer(playerName) {
     Player.registerPlayer(playerName);
 }
 
-function startGame() {
-    Game.loadGame()
+function startGame(selectElement) {
+    Game.loadGame(selectElement)
 }
 
 export {registerPlayer, startGame};

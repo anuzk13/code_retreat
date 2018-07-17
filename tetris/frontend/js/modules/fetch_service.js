@@ -10,7 +10,7 @@ const postData = (resource = ``, data = {}) => {
             "Content-Type": "application/json; charset=utf-8",
             "Authorization": playerToken
         },
-        body: JSON.stringify(data), // body data type must match "Content-Type" header
+        body: JSON.stringify(data),
     })
     .then(response => response.json()) // parses response to JSON
     .catch(error => console.error(`Fetch Error =\n`, error));
@@ -24,7 +24,22 @@ const getData = (resource = ``) => {
         headers: {
             "Content-Type": "application/json; charset=utf-8",
             "Authorization": playerToken
-        }// body data type must match "Content-Type" header
+        }
+    })
+    .then(response => response.json()) // parses response to JSON
+    .catch(error => console.error(`Fetch Error =\n`, error));
+};
+
+const putData = (resource = ``, data = {}) => {
+    const url = `${api_url}/${resource}`;
+    return fetch(url, {
+        method: "PUT",
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": playerToken
+        },
+        body: JSON.stringify(data),
     })
     .then(response => response.json()) // parses response to JSON
     .catch(error => console.error(`Fetch Error =\n`, error));
@@ -37,4 +52,4 @@ const setToken = (token) => {
 }
 
 
-export { postData, getData, getToken, setToken}
+export { postData, getData, putData, getToken, setToken }
