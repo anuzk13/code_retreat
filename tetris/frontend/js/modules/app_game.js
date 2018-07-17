@@ -13,8 +13,8 @@ const loadGame = () => {
                 return pollGameState(gameId);
             } else {
                 return FetchService.postData('game', {})
-                .then(game => 
-                    pollGameState(game.id)
+                .then(
+                    gameStatus => pollGameState(gameStatus.gameId)
                 );
             }
         } else {
@@ -30,7 +30,7 @@ const pollGameState = (gameId) => {
     return FetchService.getData(`game/${gameId}`).then(game => {
         if (game.active) {
             renderGame(game);
-            return pollGameState(game.id);
+                pollGameState(gameId);
         }
         else {
             console.log('game finished')

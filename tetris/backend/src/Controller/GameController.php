@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Game;
+use App\View\GameStatus;
 use App\Service\GameService;
 use App\Exception\PlayerAlreadyInGameException;
 
@@ -24,8 +25,9 @@ class GameController extends Controller
         $player = $request->attributes->get('_player');
         try {
             $game = $gs->registerGame($player);
-            $jsonGame = $serializer->serialize($game, 'json');
-            return new Response($jsonGame);
+            $gameStatus = $gs->getGameStatus($player, $game);
+            $jgs = $serializer->serialize($gameStatus, 'json');
+            return new Response($jgs);
         } catch (PlayerAlreadyInGameException $ex){
             throw new BadRequestHttpException($ex->getMessage());
         }
@@ -45,9 +47,9 @@ class GameController extends Controller
             );
         }
         $player = $request->attributes->get('_player');
-        $icp = $gs->isCurrentPlayer($player, $game);
-        $game->setIsCurrentPlayer($icp);
-        $jsonGame = $serializer->serialize($game, 'json');
-        return new Response($jsonGame);
+        $gameStatus = $gs->getGameStatus($player, $game);
+        $jgs = $serializer->serialize($gameStatus, 'json');
+        return new Response($jgs);
     }
+
 }

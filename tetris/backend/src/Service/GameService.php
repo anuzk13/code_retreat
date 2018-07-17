@@ -6,6 +6,7 @@ use App\Entity\Player;
 use App\Entity\Game;
 use App\Entity\Board;
 use App\Exception\PlayerAlreadyInGameException;
+use App\View\GameStatus;
 
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -47,7 +48,7 @@ class GameService
         }
     }
 
-    public function isCurrentPlayer(Player $player, Game $game) {
+    private function isCurrentPlayer(Player $player, Game $game) {
         $playerOneTurn = $game->getActivePlayer() === Game::ACTIVE_PLAYER_ONE;
         if ($playerOneTurn && $player->getId() === $game->getPlayerOne()->getId()) {
             return true;
@@ -55,5 +56,20 @@ class GameService
             return true;
         }
         return false;
+    }
+
+    private function getPlayerSymbol (Player $player, Game $game) {
+        if ($player->getId() === $game->getPlayerOne()->getId()) {
+            return $game->getPOneSymbol();
+        } else {
+            return $game->getPTwoSymbol();
+        }
+    }
+
+    public function getGameStatus (Player $player, Game $game)
+    {
+        $icp = $this->isCurrentPlayer($player, $game);
+        $ps = $this->getPlayerSymbol($player, $game);
+        return new GameStatus($game, $icp, $ps);
     }
 }
