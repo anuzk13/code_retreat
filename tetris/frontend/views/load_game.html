@@ -13,7 +13,7 @@
 
   <body>
 
-    <div id="symbol_selection" class="register">
+    <div id="load_element" class="register">
     </div>
 
     <!--JavaScript at end of body for optimized loading-->
@@ -22,8 +22,8 @@
     <script type="module">
         import * as TicTacToe from '../js/tictactoe.js';
         function load() {
-            let selectElement = document.getElementById('symbol_selection');
-            TicTacToe.startGame(selectElement);
+            let loadElement = document.getElementById('load_element');
+            TicTacToe.loadGame(loadElement);
         }
         window.onload = load;
     </script>
