@@ -6,6 +6,7 @@ use App\Entity\Player;
 use App\Entity\Game;
 use App\Entity\Board;
 use App\Exception\PlayerAlreadyInGameException;
+use App\Exception\PlayerTwoSymbolSelection;
 use App\View\GameStatus;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -66,10 +67,22 @@ class GameService
         }
     }
 
+    public function getAvailableSymbols(Game $game) {
+        if (!$game->getPOneSymbol()) {
+            return array(Board::CROSS, Board::NOUGHT);
+        } else {
+            throw new PlayerTwoSymbolSelection('Only the player one can select a symbol');
+        }
+    }
+
     public function getGameStatus (Player $player, Game $game)
     {
         $icp = $this->isCurrentPlayer($player, $game);
         $ps = $this->getPlayerSymbol($player, $game);
         return new GameStatus($game, $icp, $ps);
+    }
+
+    public function getPlayerTwoSymbol($pOneSymbol) {
+        return $pOneSymbol === Board::NOUGHT ? Board::CROSS : Board::NOUGHT;
     }
 }

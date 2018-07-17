@@ -52,4 +52,41 @@ class GameController extends Controller
         return new Response($jgs);
     }
 
+    /**
+     * @Route("/symbol/{id}", name="get_available_symbols"), methods={"GET"}
+     */
+    public function getSymbols($id, GameService $gs)
+    {
+        $game = $this->getDoctrine()
+            ->getRepository(Game::class)
+            ->find($id);
+        if (!$game) {
+            throw $this->createNotFoundException(
+                'No game found for id '.$id
+            );
+        }
+        $symbols = $gs->getAvailableSymbols($game);
+        return $this->json($symbols);
+    }
+
+    /**
+     * @Route("/set_symbol/{id}", name="set_game_symbol"), methods={"PUT"}
+     */
+    public function setSymbol($id, Request $request, GameService $gs, SerializerInterface $serializer)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $game = $entityManager->getRepository(Game::class)->find($id);
+        if (!$game) {
+            throw $this->createNotFoundException(
+                'No game found for id '.$id
+            );
+        }
+        $pOneSymbol = $request->attributes->get('json_body')['symbol'];
+        $pTwoSymbol = $gs->getPlayerTwoSymbol($pOneSymbol);
+        $game->setPOneSymbol($pOneSymbol);
+        $game->setPTwoSymbol($pTwoSymbol);
+        $entityManager->flush();
+        $jsonGame = $serializer->serialize($game, 'json');
+        return new Response($jsonGame);
+    }
 }
