@@ -10,8 +10,8 @@ function loadGame(loadElement) {
     GameLoader.loadGame(loadElement);
 }
 
-function startGame(gameElement) {
-    AppGame.startGame(gameElement);
+function startGame(board) {
+    AppGame.startGame(board);
 }
 
 export {registerPlayer, loadGame, startGame};

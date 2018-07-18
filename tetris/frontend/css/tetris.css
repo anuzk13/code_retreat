@@ -24,3 +24,42 @@
 .symbol-select {
     margin-left: calc(50% - 134px);
 }
+
+.board {
+    width: 150px;
+    margin-left: 25%;
+    margin-top: 40vh;
+}
+
+.board-cell {
+    text-align: center;
+    border: solid 2px white;
+    height: 50px;
+    background: #26a69a;
+    color: white;
+    padding: 2px !important;
+    padding-top: 14px !important;
+    cursor: pointer;
+}
+
+.board-cell:hover {
+    background: #6bc2ba;
+}
+
+div.blocked-board .row .board-cell {
+    background: #999b9b;
+    cursor: default;
+}
+
+.blocked-cell {
+    background: #999b9b;
+    cursor: default;
+}
+
+div.blocked-board .row .board-cell:hover  {
+    background: #c9cbcb;
+}
+
+.blocked-cell:hover {
+    background: #c9cbcb;
+}
