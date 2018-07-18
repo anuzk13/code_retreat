@@ -54,7 +54,7 @@ class GameController extends Controller
     }
 
     /**
-     * @Route("/symbol/{id}", name="get_available_symbols"), methods={"GET"}
+     * @Route("/symbol/{id}", name="symbol"), methods={"GET"}
      */
     public function getSymbols($id, GameService $gs)
     {
@@ -71,7 +71,7 @@ class GameController extends Controller
     }
 
     /**
-     * @Route("/set_symbol/{id}", name="set_game_symbol"), methods={"PUT"}
+     * @Route("/set_symbol/{id}", name="set_symbol"), methods={"PUT"}
      */
     public function setSymbol($id, Request $request, GameService $gs, SerializerInterface $serializer)
     {
@@ -92,7 +92,7 @@ class GameController extends Controller
     }
 
     /**
-     * @Route("/play/{id}", name="set_game_symbol"), methods={"PUT"}
+     * @Route("/play/{id}", name="play"), methods={"PUT"}
      */
     public function playPiece($id, Request $request, GameService $gs, SerializerInterface $serializer)
     {
