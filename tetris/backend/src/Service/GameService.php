@@ -34,7 +34,8 @@ class GameService
                     $game->setPlayerTwo($player);
                 } else {
                     $board = new Board();
-                    $board->setPositions([]);
+                    $positions = array_fill(0, 9, null);
+                    $board->setPositions($positions);
                     $game = new Game();
                     $game->setActive(true);
                     $game->setActivePlayer(Game::ACTIVE_PLAYER_ONE);
@@ -59,7 +60,7 @@ class GameService
         return false;
     }
 
-    private function getPlayerSymbol (Player $player, Game $game) {
+    public function getPlayerSymbol (Player $player, Game $game) {
         if ($player->getId() === $game->getPlayerOne()->getId()) {
             return $game->getPOneSymbol();
         } else {
