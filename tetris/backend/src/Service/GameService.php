@@ -31,7 +31,9 @@ class GameService
             throw new PlayerAlreadyInGameException('The player has a game already active');
         } else {
             $this->entityManager->transactional(function($em) use ($player, $gRep, &$game) {
-                if ($game = $gRep->getAvailableGame()) {
+                $games = $gRep->getAvailableGames();
+                $game = count($games) ? $games[0] : null;
+                if ($game) {
                     $game->setPlayerTwo($player);
                 } else {
                     $board = new Board();
@@ -66,7 +68,7 @@ class GameService
         $positions = $board->getPositions();
         // Check that rows match
         for ($i=0; $i < 3; $i++) { 
-            if ($positions[$i] && $positions[$i] === $positions[$i+1] && $positions[$i+1] === $positions[$i+2]) {
+            if ($positions[$i*3] && $positions[$i*3] === $positions[$i*3+1] && $positions[$i*3+1] === $positions[$i*3+2]) {
                 return true;
             }
         }

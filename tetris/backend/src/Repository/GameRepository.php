@@ -21,15 +21,15 @@ class GameRepository extends ServiceEntityRepository
     }
 
    /**
-    * @return Game|null
+    * @return Game[]
     */
-    public function getAvailableGame()
+    public function getAvailableGames()
     {
         return $this->createQueryBuilder('g')
             ->andWhere('g.playerOne IS NOT NULL')
             ->andWhere('g.playerTwo IS NULL')
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
     }
 
     public function getActiveGame(Player $player)
