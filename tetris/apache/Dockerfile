@@ -11,8 +11,11 @@ RUN apt-get update && \
     docker-php-ext-install pdo_pgsql
 
 RUN a2enmod rewrite;
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 COPY config/000-default.conf /etc/apache2/sites-enabled
 
 # Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer --version
+
+WORKDIR /var/www/back
