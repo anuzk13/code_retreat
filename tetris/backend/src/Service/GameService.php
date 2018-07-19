@@ -7,6 +7,7 @@ use App\Entity\Game;
 use App\Entity\Board;
 use App\Exception\PlayerAlreadyInGameException;
 use App\Exception\PlayerTwoSymbolSelection;
+use App\Exception\InvalidPositionExecption;
 use App\View\GameStatus;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,6 +42,7 @@ class GameService
                     $game->setActivePlayer(Game::ACTIVE_PLAYER_ONE);
                     $game->setPlayerOne($player);
                     $game->setBoard($board);
+                    $game->setMoveCount(0);
                     $em->persist($board);
                 }
                 $em->persist($game);
@@ -60,7 +62,37 @@ class GameService
         return false;
     }
 
-    public function getPlayerSymbol (Player $player, Game $game) {
+    private function gameVictory(Board $board) {
+        $positions = $board->getPositions();
+        // Check that rows match
+        for ($i=0; $i < 3; $i++) { 
+            if ($positions[$i] && $positions[$i] === $positions[$i+1] && $positions[$i+1] === $positions[$i+2]) {
+                return true;
+            }
+        }
+        // Check that columns match
+        for($i = 0; $i < 3; $i++){
+            if ($positions[$i] && $positions[$i] === $positions[$i+3] && $positions[$i+3] === $positions[$i+6]) {
+                return true;
+            }
+        }
+    
+        //check diagonals 
+        if ($positions[0] && $positions[0] === $positions[4] && $positions[4] === $positions[8]) {
+            return true;
+        }
+        if ($positions[2] && $positions[2] === $positions[4] && $positions[4] === $positions[6]) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function gameEnded (Game $game) {
+        return $game->getMoveCount() === 9;
+    }
+
+    private function getPlayerSymbol (Player $player, Game $game) {
         if ($player->getId() === $game->getPlayerOne()->getId()) {
             return $game->getPOneSymbol();
         } else {
@@ -80,7 +112,38 @@ class GameService
     {
         $icp = $this->isCurrentPlayer($player, $game);
         $ps = $this->getPlayerSymbol($player, $game);
-        return new GameStatus($game, $icp, $ps);
+        $ge = $this->gameEnded($game);
+        $iw = ($game->getWinner() && $game->getWinner()->getId() === $player->getId()) || ($this->gameVictory($game->getBoard()) && !$game->getWinner());
+        $il = $game->getWinner() ? $game->getWinner()->getId() !== $player->getId() : false;
+        $id = $ge && !$iw;
+        return new GameStatus($game, $icp, $ps, $il, $iw, $id);
+    }
+
+    public function playPiece (Player $player, Game $game, $position)
+    {
+        $positions = $game->getBoard()->getPositions();
+        if ($positions[$position]) {
+            throw new InvalidPositionExecption('there is already a piece in this cell');
+        } else {
+            $symbol = $this->getPlayerSymbol($player, $game);
+            $positions[$position] = $symbol;
+            $game->getBoard()->setPositions($positions);
+            $active_player = $game->getActivePlayer() === Game::ACTIVE_PLAYER_ONE ? Game::ACTIVE_PLAYER_TWO : Game::ACTIVE_PLAYER_ONE;
+            $game->setActivePlayer($active_player);
+            $moveCount = $game->getMoveCount();
+            $game->setMoveCount($moveCount + 1);
+            $gameStatus = $this->getGameStatus($player, $game);
+            if ($gameStatus->getIsWinner()) {
+                $game->setWinner($player);
+                $game->setActive(false);
+            } 
+            if ($gameStatus->getIsDraw()) {
+                $game->setActive(false);
+            }
+            $this->entityManager->flush();
+            return $gameStatus;
+        }
+
     }
 
     public function getPlayerTwoSymbol($pOneSymbol) {

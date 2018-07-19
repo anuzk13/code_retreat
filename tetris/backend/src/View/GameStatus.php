@@ -9,13 +9,16 @@ use App\Entity\Player;
 class GameStatus
 {
 
-    function __construct(Game $game, $isCurrentPlayer, $playerSymbol) {
+    function __construct(Game $game, $isCurrentPlayer, $playerSymbol, $isLoser, $isWinner, $isDraw) {
         $this->gameId = $game->getId();
         $this->isCurrentPlayer = $isCurrentPlayer;
         $this->board = $game->getBoard();
         $this->active = $game->getActive();
         $this->playerSymbol = $playerSymbol;
         $this->playerTwo = $game->getPlayerTwo();
+        $this->isLoser = $isLoser;
+        $this->isWinner = $isWinner;
+        $this->isDraw = $isDraw;
     }
 
     private $gameId;
@@ -29,6 +32,12 @@ class GameStatus
     private $playerSymbol;
 
     private $playerTwo;
+
+    private $isLoser;
+
+    private $isWinner;
+
+    private $isDraw;
 
     public function getGameId()
     {
@@ -58,6 +67,21 @@ class GameStatus
     public function getPlayerTwo(): ?Player
     {
         return $this->playerTwo;
+    }
+
+    public function getIsLoser(): ?bool
+    {
+        return $this->isLoser;
+    }
+
+    public function getIsWinner(): ?bool
+    {
+        return $this->isWinner;
+    }
+
+    public function getIsDraw(): ?bool
+    {
+        return $this->isDraw;
     }
 
 }

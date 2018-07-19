@@ -58,6 +58,16 @@ class Game
 
     private $isCurrentPlayer;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $moveCount;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Player")
+     */
+    private $winner;
+
     public function getId()
     {
         return $this->id;
@@ -157,5 +167,29 @@ class Game
     public function getIsCurrentPlayer(): ?bool
     {
         return $this->isCurrentPlayer;
+    }
+
+    public function getMoveCount(): ?int
+    {
+        return $this->moveCount;
+    }
+
+    public function setMoveCount(int $moveCount): self
+    {
+        $this->moveCount = $moveCount;
+
+        return $this;
+    }
+
+    public function getWinner(): ?Player
+    {
+        return $this->winner;
+    }
+
+    public function setWinner(?Player $winner): self
+    {
+        $this->winner = $winner;
+
+        return $this;
     }
 }

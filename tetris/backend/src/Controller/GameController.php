@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Game;
 use App\View\GameStatus;
 use App\Service\GameService;
+use App\Service\PlayerService;
 use App\Exception\PlayerAlreadyInGameException;
 
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
-use App\Exception\InvalidPositionExecption;
 
 
 class GameController extends Controller
@@ -92,6 +92,23 @@ class GameController extends Controller
     }
 
     /**
+     * @Route("/end/{id}", name="end"), methods={"PUT"}
+     */
+    public function endGame($id)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $game = $entityManager->getRepository(Game::class)->find($id);
+        if (!$game) {
+            throw $this->createNotFoundException(
+                'No game found for id '.$id
+            );
+        }
+        $game->setActive(false);
+        $entityManager->flush();
+        return new Response(true);
+    }
+
+    /**
      * @Route("/play/{id}", name="play"), methods={"PUT"}
      */
     public function playPiece($id, Request $request, GameService $gs, SerializerInterface $serializer)
@@ -104,20 +121,18 @@ class GameController extends Controller
             );
         }
         $position = (int) $request->attributes->get('json_body')['position'];
-        $positions = $game->getBoard()->getPositions();
-        if ($positions[$position]) {
-            throw new InvalidPositionExecption('there is already a piece in this cell');
-        } else {
-            $player = $request->attributes->get('_player');
-            $symbol = $gs->getPlayerSymbol($player, $game);
-            $positions[$position] = $symbol;
-            $game->getBoard()->setPositions($positions);
-            $active_player = $game->getActivePlayer() === Game::ACTIVE_PLAYER_ONE ? Game::ACTIVE_PLAYER_TWO : Game::ACTIVE_PLAYER_ONE;
-            $game->setActivePlayer($active_player);
-            $entityManager->flush();
-            $gameStatus = $gs->getGameStatus($player, $game);
-            $jgs = $serializer->serialize($gameStatus, 'json');
-            return new Response($jgs);
-        }
+        $player = $request->attributes->get('_player');
+        $gameStatus = $gs->playPiece($player, $game, $position);
+        $jgs = $serializer->serialize($gameStatus, 'json');
+        return new Response($jgs);
     }
+
+    /**
+     * @Route("/test", name="test"), methods={"GET"}
+     */
+    public function test()
+    {
+        return new Response('ANA');
+    }
+
 }

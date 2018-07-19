@@ -42,14 +42,14 @@ class PlayerService
     * @return string Ciphertext string representing $player_id encrypted with the service key
     */
     public function playerToken(Player $player) {
-        return Crypto::encrypt((string)$player->getId(), $this->key);
+        return $player->getId();
     }
 
     /**
     * @return Player
     */
     public function playerFromToken($token) {
-        $pId = (int)Crypto::decrypt($token, $this->key);
+        $pId = (int)$token;
         $pRep = $this->entityManager->getRepository(Player::class);
         return $pRep->find($pId);
     }
