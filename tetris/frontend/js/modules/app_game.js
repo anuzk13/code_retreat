@@ -85,9 +85,9 @@ const pollGameState = (gameId) =>
 
 const selectCell = (index, gameId, playerSymbol) => {
     document.getElementsByClassName('board-cell')[index].innerHTML = playerSymbol;
+    endGameTurn();
     return FetchService.putData(`play/${gameId}`, {position : index}).then(gameStatus => {
         renderGame(gameStatus);
-        endGameTurn();
         if (gameStatus.isWinner) {
             renderWinner()
         } else if (gameStatus.isDraw) {
