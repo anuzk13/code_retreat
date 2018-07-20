@@ -68,3 +68,12 @@ div.blocked-board .row .board-cell:hover  {
 .blocked-cell:hover {
     background: #c9cbcb;
 }
+
+.player-header {
+    text-align: center;
+    color: #999b9b;
+}
+
+.winner-cell {
+    background: aquamarine !important;
+}

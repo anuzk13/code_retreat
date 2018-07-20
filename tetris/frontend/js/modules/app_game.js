@@ -30,7 +30,7 @@ const initGame = (gameId) =>
         if (!gameStatus.playerSymbol || !gameStatus.playerTwo) {
             window.location.replace(`../..`);
         } else {
-            createBoard();
+            createBoard(gameStatus);
             renderGame(gameStatus);
             if (!gameStatus.active) {
                 renderGameEnd(gameStatus);
@@ -43,8 +43,12 @@ const initGame = (gameId) =>
         }
     });
 
-const createBoard = () => {
+const createBoard = (gameStatus) => {
     boardElement.className = 'board';
+    const header = document.createElement("h5");
+    header.className = 'player-header';
+    header.innerHTML = `Jugador - ${gameStatus.playerSymbol}`;
+    boardElement.appendChild(header);
     const row = document.createElement("div");
     row.className = 'row';
     for (let index = 0; index < 9; index++) {
@@ -57,11 +61,11 @@ const createBoard = () => {
 
 const renderGameEnd = (gameStatus) => {
     if (gameStatus.isLoser) {
-        renderLoser(gameStatus.playerSymbol);
+        renderLoser();
     } else if (gameStatus.isDraw) {
         renderDraw();
     } else if (gameStatus.isWinner) {    
-        renderWinner(gameStatus.playerSymbol);
+        renderWinner();
     } 
 }
 
@@ -85,7 +89,7 @@ const selectCell = (index, gameId, playerSymbol) => {
         renderGame(gameStatus);
         endGameTurn();
         if (gameStatus.isWinner) {
-            renderWinner(gameStatus.playerSymbol)
+            renderWinner()
         } else if (gameStatus.isDraw) {
             renderDraw()
         } else {
@@ -122,15 +126,18 @@ const renderGame = (gameStatus) => {
     for (let i = 0; i < 9; i++) {
         const button = buttons[i];
         button.innerHTML = gameStatus.board.positions[i] || '';
-        if (gameStatus.board.positions[i]) {
+        if (gameStatus.gameVictory && gameStatus.gameVictory.includes(i)) {
+            console.log(i);
+            button.classList.add('winner-cell');
+        } else if (gameStatus.board.positions[i]) {
             button.classList.add('blocked-cell');
         }
     }
 }
 
-const renderWinner = (playerSymbol) => {
+const renderWinner = () => {
     const winner = document.createElement("h3"); 
-    winner.innerHTML = `Ganador ${playerSymbol}`;
+    winner.innerHTML = `Ganador`;
     winner.className = 'result';
     boardElement.appendChild(winner);
 }
@@ -142,9 +149,9 @@ const renderDraw = () => {
     boardElement.appendChild(draw);
 }
 
-const renderLoser = (playerSymbol) => {
+const renderLoser = () => {
     const loser = document.createElement("h3"); 
-    loser.innerHTML =  `Perdedor ${playerSymbol}`;
+    loser.innerHTML =  `Perdedor`;
     loser.className = 'result';
     boardElement.appendChild(loser);
 }

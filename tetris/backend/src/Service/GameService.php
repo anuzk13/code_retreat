@@ -69,25 +69,25 @@ class GameService
         // Check that rows match
         for ($i=0; $i < 3; $i++) { 
             if ($positions[$i*3] && $positions[$i*3] === $positions[$i*3+1] && $positions[$i*3+1] === $positions[$i*3+2]) {
-                return true;
+                return [$i*3, $i*3+1, $i*3+2];
             }
         }
         // Check that columns match
         for($i = 0; $i < 3; $i++){
             if ($positions[$i] && $positions[$i] === $positions[$i+3] && $positions[$i+3] === $positions[$i+6]) {
-                return true;
+                return [$i, $i+3, $i+6];
             }
         }
     
         //check diagonals 
         if ($positions[0] && $positions[0] === $positions[4] && $positions[4] === $positions[8]) {
-            return true;
+            return [0,4,8];
         }
         if ($positions[2] && $positions[2] === $positions[4] && $positions[4] === $positions[6]) {
-            return true;
+            return [2,4,6];
         }
 
-        return false;
+        return [];
     }
 
     private function gameEnded (Game $game) {
@@ -115,10 +115,11 @@ class GameService
         $icp = $this->isCurrentPlayer($player, $game);
         $ps = $this->getPlayerSymbol($player, $game);
         $ge = $this->gameEnded($game);
-        $iw = ($game->getWinner() && $game->getWinner()->getId() === $player->getId()) || ($this->gameVictory($game->getBoard()) && !$game->getWinner());
+        $gameVictory = $this->gameVictory($game->getBoard());
+        $iw = ($game->getWinner() && $game->getWinner()->getId() === $player->getId()) || (count($gameVictory) && !$game->getWinner());
         $il = $game->getWinner() ? $game->getWinner()->getId() !== $player->getId() : false;
         $id = $ge && !$iw;
-        return new GameStatus($game, $icp, $ps, $il, $iw, $id);
+        return new GameStatus($game, $icp, $ps, $il, $iw, $id, $gameVictory);
     }
 
     public function playPiece (Player $player, Game $game, $position)
