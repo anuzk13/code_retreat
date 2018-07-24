@@ -7,15 +7,6 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 
 class PlayerTest extends WebTestCase
 {
-    public function setUp()
-    {
-        $client = static::createClient();
-        $container = $client->getContainer();
-        $doctrine = $container->get('doctrine');
-        $entityManager = $doctrine->getManager();
-        $purger = new ORMPurger($entityManager);
-        $purger->purge();
-    }
 
     public function testSetPlayer()
     {
