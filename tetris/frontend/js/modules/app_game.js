@@ -1,6 +1,7 @@
 import * as FetchService from './fetch_service.js';
 
 let boardElement;
+let turnStatus;
 
 const startGame = (b) => {
     boardElement = b;
@@ -32,6 +33,7 @@ const initGame = async (gameId) => {
     } else {
         createBoard(gameStatus);
         renderGame(gameStatus);
+        turnStatus = gameStatus.isCurrentPlayer;
         if (!gameStatus.active) {
             renderGameEnd(gameStatus);
             renderPlayAgain();
@@ -104,9 +106,12 @@ const pollGameState = async (gameId) => {
             renderGameEnd(gameStatus);
             keepPolling = false;
         }
-        else if (gameStatus.isCurrentPlayer) {
-            renderGame(gameStatus);
-            setGameTurn(gameStatus, gameId);
+        if (turnStatus != gameStatus.isCurrentPlayer) {
+            turnStatus = gameStatus.isCurrentPlayer;
+            if (gameStatus.isCurrentPlayer) {
+                renderGame(gameStatus);
+                setGameTurn(gameStatus, gameId);
+            }
         }
     }
 };
@@ -134,6 +139,7 @@ const setGameTurn = (gameStatus, gameId) => {
 }
 
 const endGameTurn = () => {
+    boardElement.classList.add('blocked-board');
     const buttons = document.getElementsByClassName('board-cell');
     for (let index = 0; index < 9; index++) {
         const button = buttons[index];
