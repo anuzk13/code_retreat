@@ -78,6 +78,6 @@ div.blocked-board .row .board-cell:hover  {
     background: aquamarine !important;
 }
 
-.abandon-button {
+.abandon-button, .replay-button {
     width:100%;
 }

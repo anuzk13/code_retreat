@@ -34,6 +34,7 @@ const initGame = async (gameId) => {
         renderGame(gameStatus);
         if (!gameStatus.active) {
             renderGameEnd(gameStatus);
+            renderPlayAgain();
         }
         else if (!gameStatus.isCurrentPlayer) {
             return pollGameState(gameId);
@@ -66,6 +67,21 @@ const createBoard = (gameStatus) => {
         abandonButton.onclick = () => abandonGame(gameStatus.gameId);
         boardElement.appendChild(abandonButton);
     }
+}
+
+const renderPlayAgain = () => {
+    // remove abando button
+    const boardElement = document.getElementsByClassName('board')[0];
+    const abandonButton = document.getElementById('abandonGame');
+    if (abandonButton){
+        abandonButton.remove();
+    }
+    const replayButtoon = document.createElement("button");
+    replayButtoon.textContent = "Jugar otra vez";
+    replayButtoon.className = "replay-button";
+    replayButtoon.id = "replayGame";
+    replayButtoon.onclick = () => window.location.replace(`../..`);
+    boardElement.appendChild(replayButtoon);
 }
 
 const renderGameEnd = (gameStatus) => {
