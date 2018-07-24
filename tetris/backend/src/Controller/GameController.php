@@ -122,12 +122,4 @@ class GameController extends Controller
         return new Response($jgs);
     }
 
-    /**
-     * @Route("/test", name="test"), methods={"GET"}
-     */
-    public function test()
-    {
-        return new Response('ANA');
-    }
-
 }
