@@ -31,8 +31,8 @@ class Game
     private $playerTwo;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Board", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToOne(targetEntity="App\Entity\Board", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $board;
 
