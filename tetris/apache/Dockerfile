@@ -6,9 +6,11 @@ RUN apt-get update \
     openssl \
     unzip \
     libpq-dev \
+    zlib1g-dev \
     && docker-php-ext-install pdo_pgsql \
     && docker-php-ext-install opcache \
     && docker-php-ext-install mbstring \
+    && docker-php-ext-install zip \
     && pecl install apcu-5.1.12 \
     && docker-php-ext-enable apcu
 
