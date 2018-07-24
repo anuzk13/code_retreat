@@ -17,27 +17,31 @@ const loadGame = (le) => {
                 return pollGameState(gameId);
             } else {
                 return FetchService.postData('game', {})
-                .then(
-                    gameStatus => pollGameState(gameStatus.gameId)
-                );
+                    .then(
+                        gameStatus => pollGameState(gameStatus.gameId)
+                    );
             }
         } else {
             window.location.replace(`../..`);
         }
     }
-    catch(error) {
+    catch (error) {
         window.location.replace(`../..`);
     }
 }
 
-const pollGameState = (gameId) => {
-    return FetchService.getData(`game/${gameId}`).then(gameStatus => {
+const pollGameState = async (gameId) => {
+    let keepPolling = true;
+    while (keepPolling) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        const gameStatus = await FetchService.getData(`game/${gameId}`);
         if (gameStatus.active) {
             if (gameStatus.isCurrentPlayer && !gameStatus.playerSymbol) {
-                loadSymbols(gameId)
+                await loadSymbols(gameId)
+                keepPolling = false;
             } else if ((!gameStatus.isCurrentPlayer && !gameStatus.playerSymbol) || !gameStatus.playerTwo) {
                 renderWaiting();
-                pollGameState(gameId);
+                keepPolling = true;
             } else {
                 playGame(gameId);
             }
@@ -45,7 +49,7 @@ const pollGameState = (gameId) => {
         else {
             throw new InvalidStartState('cannot start a game that ended');
         }
-    })
+    }
 }
 
 const renderWaiting = () => {
@@ -68,27 +72,26 @@ const playGame = (gameId) => {
     window.location.replace(`./play_game.html#${pEndodedData}`);
 }
 
-const loadSymbols = (gameId) => {
-    FetchService.getData(`symbol/${gameId}`).then(symbols => {
-        const title = document.createElement("span");
-        title.innerHTML = 'Seleccione un simbolo';
-        loadElement.appendChild(title);
-        for (const key in symbols) { 
-            const p =  document.createElement("p");
-            const label = document.createElement("label");
-            const input = document.createElement("input");
-            input.type = 'radio';
-            input.name = `group-1`; 
-            const span = document.createElement("span");
-            span.innerHTML = symbols[key];
-            label.appendChild(input);
-            label.appendChild(span);
-            p.appendChild(label);
-            loadElement.appendChild(p);
-        }
-        const button = createSelectButton(gameId);
-        loadElement.appendChild(button);
-    })
+const loadSymbols = async (gameId) => {
+    const symbols = await FetchService.getData(`symbol/${gameId}`);
+    const title = document.createElement("span");
+    title.innerHTML = 'Seleccione un simbolo';
+    loadElement.appendChild(title);
+    for (const key in symbols) {
+        const p = document.createElement("p");
+        const label = document.createElement("label");
+        const input = document.createElement("input");
+        input.type = 'radio';
+        input.name = `group-1`;
+        const span = document.createElement("span");
+        span.innerHTML = symbols[key];
+        label.appendChild(input);
+        label.appendChild(span);
+        p.appendChild(label);
+        loadElement.appendChild(p);
+    }
+    const button = createSelectButton(gameId);
+    loadElement.appendChild(button);
 }
 
 const createSelectButton = (gameId) => {
@@ -111,7 +114,7 @@ const createSelectButton = (gameId) => {
 }
 
 const selectSymbol = (gameId, symbol) => {
-    FetchService.putData(`set_symbol/${gameId}`, {symbol}).then(() => {
+    FetchService.putData(`set_symbol/${gameId}`, { symbol }).then(() => {
         return pollGameState(gameId);
     })
 }
@@ -120,4 +123,4 @@ class InvalidStartState extends Error {
 }
 
 
-export {loadGame, selectSymbol, InvalidStartState}
+export { loadGame, selectSymbol, InvalidStartState }

@@ -20,28 +20,28 @@ const startGame = (b) => {
             window.location.replace(`../..`);
         }
     }
-    catch(error) {
+    catch (error) {
         window.location.replace(`../..`);
     }
 }
 
-const initGame = (gameId) => 
-     FetchService.getData(`game/${gameId}`).then(gameStatus => {
-        if (!gameStatus.playerSymbol || !gameStatus.playerTwo) {
-            window.location.replace(`../..`);
-        } else {
-            createBoard(gameStatus);
-            renderGame(gameStatus);
-            if (!gameStatus.active) {
-                renderGameEnd(gameStatus);
-            }
-            else if (!gameStatus.isCurrentPlayer) {
-                return pollGameState(gameId);
-            } else {
-                setGameTurn(gameStatus, gameId);
-            }
+const initGame = async (gameId) => {
+    const gameStatus = await FetchService.getData(`game/${gameId}`);
+    if (!gameStatus.playerSymbol || !gameStatus.playerTwo) {
+        window.location.replace(`../..`);
+    } else {
+        createBoard(gameStatus);
+        renderGame(gameStatus);
+        if (!gameStatus.active) {
+            renderGameEnd(gameStatus);
         }
-    });
+        else if (!gameStatus.isCurrentPlayer) {
+            return pollGameState(gameId);
+        } else {
+            setGameTurn(gameStatus, gameId);
+        }
+    }
+};
 
 const createBoard = (gameStatus) => {
     boardElement.className = 'board';
@@ -64,29 +64,33 @@ const renderGameEnd = (gameStatus) => {
         renderLoser();
     } else if (gameStatus.isDraw) {
         renderDraw();
-    } else if (gameStatus.isWinner) {    
+    } else if (gameStatus.isWinner) {
         renderWinner();
-    } 
+    }
 }
 
-const pollGameState = (gameId) =>
-    FetchService.getData(`game/${gameId}`).then(gameStatus => {
+const pollGameState = async (gameId) => {
+    let keepPolling = true;
+    while (keepPolling) {
+        await new Promise(res => window.setTimeout(res, 1000));
+        const gameStatus = await FetchService.getData(`game/${gameId}`);
         if (!gameStatus.active) {
             renderGame(gameStatus);
             renderGameEnd(gameStatus);
+            keepPolling = false;
         }
         else if (gameStatus.isCurrentPlayer) {
             renderGame(gameStatus);
             setGameTurn(gameStatus, gameId);
-        } else {
-            return pollGameState(gameId);
+            keepPolling = false;
         }
-    });
+    }
+};
 
 const selectCell = (index, gameId, playerSymbol) => {
     document.getElementsByClassName('board-cell')[index].innerHTML = playerSymbol;
     endGameTurn();
-    return FetchService.putData(`play/${gameId}`, {position : index}).then(gameStatus => {
+    return FetchService.putData(`play/${gameId}`, { position: index }).then(gameStatus => {
         renderGame(gameStatus);
         if (gameStatus.isWinner) {
             renderWinner()
@@ -136,24 +140,24 @@ const renderGame = (gameStatus) => {
 }
 
 const renderWinner = () => {
-    const winner = document.createElement("h3"); 
+    const winner = document.createElement("h3");
     winner.innerHTML = `Ganador`;
     winner.className = 'result';
     boardElement.appendChild(winner);
 }
 
 const renderDraw = () => {
-    const draw = document.createElement("h3"); 
+    const draw = document.createElement("h3");
     draw.innerHTML = 'Empate';
     draw.className = 'result';
     boardElement.appendChild(draw);
 }
 
 const renderLoser = () => {
-    const loser = document.createElement("h3"); 
-    loser.innerHTML =  `Perdedor`;
+    const loser = document.createElement("h3");
+    loser.innerHTML = `Perdedor`;
     loser.className = 'result';
     boardElement.appendChild(loser);
 }
 
-export {startGame}
+export { startGame }
