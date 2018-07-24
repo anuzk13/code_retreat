@@ -1,4 +1,4 @@
-const api_url = 'http://localhost:8081/back';
+const api_url = '/back';
 let playerToken = '';
 
 const postData = (resource = ``, data = {}) => {
@@ -12,8 +12,8 @@ const postData = (resource = ``, data = {}) => {
         },
         body: JSON.stringify(data),
     })
-    .then(response => response.json()) // parses response to JSON
-    .catch(error => console.error(`Fetch Error =\n`, error));
+        .then(response => response.json()) // parses response to JSON
+        .catch(error => console.error(`Fetch Error =\n`, error));
 };
 
 const getData = (resource = ``) => {
@@ -26,8 +26,8 @@ const getData = (resource = ``) => {
             "Authorization": playerToken
         }
     })
-    .then(response => response.json()) // parses response to JSON
-    .catch(error => console.error(`Fetch Error =\n`, error));
+        .then(response => response.json()) // parses response to JSON
+        .catch(error => console.error(`Fetch Error =\n`, error));
 };
 
 const putData = (resource = ``, data = {}) => {
@@ -41,8 +41,8 @@ const putData = (resource = ``, data = {}) => {
         },
         body: JSON.stringify(data),
     })
-    .then(response => response.json()) // parses response to JSON
-    .catch(error => console.error(`Fetch Error =\n`, error));
+        .then(response => response.json()) // parses response to JSON
+        .catch(error => console.error(`Fetch Error =\n`, error));
 };
 
 const getToken = () => playerToken;
