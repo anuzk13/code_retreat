@@ -16,8 +16,10 @@ doctrine:
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore
-        metadata_cache_driver: apcu
         auto_mapping: true
+        metadata_cache_driver: apcu
+        query_cache_driver: apcu
+        result_cache_driver: apcu
         mappings:
             App:
                 is_bundle: false

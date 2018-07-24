@@ -9,7 +9,7 @@ RUN apt-get update \
     && docker-php-ext-install pdo_pgsql \
     && docker-php-ext-install opcache \
     && docker-php-ext-install mbstring \
-    && pecl install apcu-5.1.5 \
+    && pecl install apcu-5.1.12 \
     && docker-php-ext-enable apcu
 
 RUN a2enmod rewrite;
