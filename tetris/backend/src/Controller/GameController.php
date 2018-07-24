@@ -117,9 +117,8 @@ class GameController extends Controller
         }
         $position = (int) $request->attributes->get('json_body')['position'];
         $player = $request->attributes->get('_player');
-        $gameStatus = $gs->playPiece($player, $game, $position);
-        $jgs = $serializer->serialize($gameStatus, 'json');
-        return new Response($jgs);
+        $gs->playPiece($player, $game, $position);
+        return $this->json(true);
     }
 
 }

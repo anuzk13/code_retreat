@@ -31,7 +31,7 @@ class GameService
             throw new PlayerAlreadyInGameException('The player has a game already active');
         } else {
             $this->entityManager->transactional(function($em) use ($player, $gRep, &$game) {
-                $games = $gRep->getAvailableGames();
+                $games = $gRep->getAvailableGames($player);
                 $game = count($games) ? $games[0] : null;
                 if ($game) {
                     $game->setPlayerTwo($player);
@@ -112,14 +112,16 @@ class GameService
 
     public function getGameStatus (Player $player, Game $game)
     {
-        $icp = $this->isCurrentPlayer($player, $game);
-        $ps = $this->getPlayerSymbol($player, $game);
-        $ge = $this->gameEnded($game);
-        $gameVictory = $this->gameVictory($game->getBoard());
-        $iw = ($game->getWinner() && $game->getWinner()->getId() === $player->getId()) || (count($gameVictory) && !$game->getWinner());
-        $il = $game->getWinner() ? $game->getWinner()->getId() !== $player->getId() : false;
-        $id = $ge && !$iw;
-        return new GameStatus($game, $icp, $ps, $il, $iw, $id, $gameVictory);
+        $isCurrentPlayer = $this->isCurrentPlayer($player, $game);
+        $playerSymbol = $this->getPlayerSymbol($player, $game);
+        $isWinner = $game->getWinner() && $game->getWinner()->getId() === $player->getId();
+        $isLoser = $game->getWinner() && $game->getWinner()->getId() !== $player->getId();
+        $isDraw = $this->gameEnded($game) && !$isWinner && !$isLoser;
+        $gameVictory = [];
+        if ($isWinner || $isLoser) {
+            $gameVictory = $this->gameVictory($game->getBoard());
+        }
+        return new GameStatus($game, $isCurrentPlayer, $playerSymbol, $isLoser, $isWinner, $isDraw, $gameVictory);
     }
 
     public function playPiece (Player $player, Game $game, $position)
@@ -135,16 +137,15 @@ class GameService
             $game->setActivePlayer($active_player);
             $moveCount = $game->getMoveCount();
             $game->setMoveCount($moveCount + 1);
-            $gameStatus = $this->getGameStatus($player, $game);
-            if ($gameStatus->getIsWinner()) {
+            $gameVictory = $this->gameVictory($game->getBoard());
+            if (count($gameVictory)) {
                 $game->setWinner($player);
                 $game->setActive(false);
             } 
-            if ($gameStatus->getIsDraw()) {
+            if ($this->gameEnded($game)) {
                 $game->setActive(false);
             }
             $this->entityManager->flush();
-            return $gameStatus;
         }
 
     }

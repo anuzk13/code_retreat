@@ -120,15 +120,7 @@ const abandonGame = async (gameId) => {
 const selectCell = async (index, gameId, playerSymbol) => {
     document.getElementsByClassName('board-cell')[index].innerHTML = playerSymbol;
     endGameTurn();
-    const gameStatus = await FetchService.putData(`play/${gameId}`, { position: index });
-    renderGame(gameStatus);
-    if (gameStatus.isWinner) {
-        renderWinner()
-    } else if (gameStatus.isDraw) {
-        renderDraw()
-    } else {
-        return pollGameState(gameId);
-    }
+    await FetchService.putData(`play/${gameId}`, { position: index });
 }
 
 const setGameTurn = (gameStatus, gameId) => {
