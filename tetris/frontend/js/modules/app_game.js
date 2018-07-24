@@ -156,7 +156,9 @@ const renderGame = (gameStatus) => {
     const buttons = document.getElementsByClassName('board-cell');
     for (let i = 0; i < 9; i++) {
         const button = buttons[i];
-        button.innerHTML = gameStatus.board.positions[i] || '';
+        if (!button.innerHTML || button.innerHTML !== '') {
+            button.innerHTML = gameStatus.board.positions[i] || '';
+        }
         if (gameStatus.gameVictory && gameStatus.gameVictory.includes(i)) {
             button.classList.add('winner-cell');
         } else if (gameStatus.board.positions[i]) {
