@@ -77,3 +77,7 @@ div.blocked-board .row .board-cell:hover  {
 .winner-cell {
     background: aquamarine !important;
 }
+
+.abandon-button {
+    width:100%;
+}

@@ -149,6 +149,22 @@ class GameService
 
     }
 
+    public function abandonGame(Player $player, Game $game){
+        if ($game->getPlayerOne()->getId() === $player->getId()){
+            $game->setActive(false);
+            $game->setWinner($game->getPlayerTwo());
+            $this->entityManager->flush();
+        }else if (
+            $game->getPlayerTwo()->getId() === $player->getId()
+        ){
+            $game->setActive(false);
+            $game->setWinner($game->getPlayerOne());
+            $this->entityManager->flush();
+        }else{
+            throw new \Exception("Invalid player");
+        }
+    }
+
     public function getPlayerTwoSymbol($pOneSymbol) {
         return $pOneSymbol === Board::NOUGHT ? Board::CROSS : Board::NOUGHT;
     }

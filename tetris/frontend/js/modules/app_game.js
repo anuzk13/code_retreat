@@ -39,6 +39,7 @@ const initGame = async (gameId) => {
             return pollGameState(gameId);
         } else {
             setGameTurn(gameStatus, gameId);
+            return pollGameState(gameId);
         }
     }
 };
@@ -57,6 +58,14 @@ const createBoard = (gameStatus) => {
         row.appendChild(cell)
     }
     boardElement.appendChild(row);
+    if (gameStatus.active) {
+        const abandonButton = document.createElement("button");
+        abandonButton.textContent = "Abandonar Juego";
+        abandonButton.className = "abandon-button";
+        abandonButton.id = "abandonGame";
+        abandonButton.onclick = () => abandonGame(gameStatus.gameId);
+        boardElement.appendChild(abandonButton);
+    }
 }
 
 const renderGameEnd = (gameStatus) => {
@@ -82,24 +91,28 @@ const pollGameState = async (gameId) => {
         else if (gameStatus.isCurrentPlayer) {
             renderGame(gameStatus);
             setGameTurn(gameStatus, gameId);
-            keepPolling = false;
         }
     }
 };
 
-const selectCell = (index, gameId, playerSymbol) => {
+const abandonGame = async (gameId) => {
+    document.getElementById('abandonGame').setAttribute('disabled', true);
+    boardElement.classList.add('blocked-board');
+    await FetchService.putData(`end/${gameId}`);
+}
+
+const selectCell = async (index, gameId, playerSymbol) => {
     document.getElementsByClassName('board-cell')[index].innerHTML = playerSymbol;
     endGameTurn();
-    return FetchService.putData(`play/${gameId}`, { position: index }).then(gameStatus => {
-        renderGame(gameStatus);
-        if (gameStatus.isWinner) {
-            renderWinner()
-        } else if (gameStatus.isDraw) {
-            renderDraw()
-        } else {
-            return pollGameState(gameId);
-        }
-    });
+    const gameStatus = await FetchService.putData(`play/${gameId}`, { position: index });
+    renderGame(gameStatus);
+    if (gameStatus.isWinner) {
+        renderWinner()
+    } else if (gameStatus.isDraw) {
+        renderDraw()
+    } else {
+        return pollGameState(gameId);
+    }
 }
 
 const setGameTurn = (gameStatus, gameId) => {
@@ -131,7 +144,6 @@ const renderGame = (gameStatus) => {
         const button = buttons[i];
         button.innerHTML = gameStatus.board.positions[i] || '';
         if (gameStatus.gameVictory && gameStatus.gameVictory.includes(i)) {
-            console.log(i);
             button.classList.add('winner-cell');
         } else if (gameStatus.board.positions[i]) {
             button.classList.add('blocked-cell');

@@ -94,18 +94,13 @@ class GameController extends Controller
     /**
      * @Route("/end/{id}", name="end"), methods={"PUT"}
      */
-    public function endGame($id)
+    public function endGame($id, Request $request, GameService $gs)
     {
         $entityManager = $this->getDoctrine()->getManager();
+        $player = $request->attributes->get('_player');
         $game = $entityManager->getRepository(Game::class)->find($id);
-        if (!$game) {
-            throw $this->createNotFoundException(
-                'No game found for id '.$id
-            );
-        }
-        $game->setActive(false);
-        $entityManager->flush();
-        return new Response(true);
+        $gs->abandonGame($player, $game);
+        return new Response('"loser"');
     }
 
     /**
