@@ -2,6 +2,7 @@ import * as FetchService from './fetch_service.js';
 
 let boardElement;
 let turnStatus;
+let working = false;
 
 const startGame = (b) => {
     boardElement = b;
@@ -64,7 +65,7 @@ const createBoard = (gameStatus) => {
     if (gameStatus.active) {
         const abandonButton = document.createElement("button");
         abandonButton.textContent = "Abandonar Juego";
-        abandonButton.className = "abandon-button";
+        abandonButton.className = "abandon-button btn waves-effect waves-light";
         abandonButton.id = "abandonGame";
         abandonButton.onclick = () => abandonGame(gameStatus.gameId);
         boardElement.appendChild(abandonButton);
@@ -75,12 +76,12 @@ const renderPlayAgain = () => {
     // remove abando button
     const boardElement = document.getElementsByClassName('board')[0];
     const abandonButton = document.getElementById('abandonGame');
-    if (abandonButton){
+    if (abandonButton) {
         abandonButton.remove();
     }
     const replayButtoon = document.createElement("button");
     replayButtoon.textContent = "Jugar otra vez";
-    replayButtoon.className = "replay-button";
+    replayButtoon.className = "replay-button btn waves-effect waves-light";
     replayButtoon.id = "replayGame";
     replayButtoon.onclick = () => window.location.replace(`../..`);
     boardElement.appendChild(replayButtoon);
@@ -101,16 +102,22 @@ const pollGameState = async (gameId) => {
     while (keepPolling) {
         await new Promise(res => window.setTimeout(res, 1000));
         const gameStatus = await FetchService.getData(`game/${gameId}`);
+        if (working) {
+            // ignore result
+            continue;
+        }
         if (!gameStatus.active) {
             renderGame(gameStatus);
+            renderPlayAgain();
             renderGameEnd(gameStatus);
             keepPolling = false;
         }
-        if (turnStatus != gameStatus.isCurrentPlayer) {
-            turnStatus = gameStatus.isCurrentPlayer;
+        else if (turnStatus != gameStatus.isCurrentPlayer) {
             if (gameStatus.isCurrentPlayer) {
                 renderGame(gameStatus);
                 setGameTurn(gameStatus, gameId);
+            } else {
+                endGameTurn();
             }
         }
     }
@@ -123,12 +130,18 @@ const abandonGame = async (gameId) => {
 }
 
 const selectCell = async (index, gameId, playerSymbol) => {
+    working = true;
     document.getElementsByClassName('board-cell')[index].innerHTML = playerSymbol;
-    endGameTurn();
+    for (let c of document.getElementsByClassName('board-cell')) {
+        c.onclick = null;
+    }
     await FetchService.putData(`play/${gameId}`, { position: index });
+    endGameTurn();
+    working = false;
 }
 
 const setGameTurn = (gameStatus, gameId) => {
+    turnStatus = true;
     const buttons = document.getElementsByClassName('board-cell');
     for (let index = 0; index < 9; index++) {
         const button = buttons[index];
@@ -139,6 +152,7 @@ const setGameTurn = (gameStatus, gameId) => {
 }
 
 const endGameTurn = () => {
+    turnStatus = false;
     boardElement.classList.add('blocked-board');
     const buttons = document.getElementsByClassName('board-cell');
     for (let index = 0; index < 9; index++) {
