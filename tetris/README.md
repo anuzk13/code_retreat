@@ -18,7 +18,10 @@ Para iniciar la máquina
 
 ``````bash
 docker-machine start
+# y detenerla
+docker-machine stop
 ``````
+
 
 Para conectarse a la máquina
 
