@@ -101,10 +101,10 @@ const pollGameState = async (gameId) => {
     let keepPolling = true;
     while (keepPolling) {
         await new Promise(res => window.setTimeout(res, 1000));
+        const wasWorking = working;
         const gameStatus = await FetchService.getData(`game/${gameId}`);
-        if (working) {
-            // ignore result
-            continue;
+        if (working || wasWorking) {
+            continue; // ignore result
         }
         if (!gameStatus.active) {
             renderGame(gameStatus);
@@ -131,12 +131,12 @@ const abandonGame = async (gameId) => {
 
 const selectCell = async (index, gameId, playerSymbol) => {
     working = true;
+    boardElement.classList.add('blocked-board');
     document.getElementsByClassName('board-cell')[index].innerHTML = playerSymbol;
     for (let c of document.getElementsByClassName('board-cell')) {
         c.onclick = null;
     }
     await FetchService.putData(`play/${gameId}`, { position: index });
-    endGameTurn();
     working = false;
 }
 
