@@ -1,6 +1,8 @@
 
 # CODE RETREAT TETRIS
 
+[Presentación](https://docs.google.com/presentation/d/1XCL4lNwWEPwftEukpVhnWJyqULx7-kJz1trw9r8E5bQ/edit?usp=sharing)
+
 Este proyecto está basado en dos contenedores, uno de base de datos y uno de apache y php (ver el archivo *docker-compose.yml*). La aplicación como tal se encuentra en las carpetas back y front, que se mapean a volúmenes dentro del contenedor de apache.
 
 ## Iniciar la máquina
