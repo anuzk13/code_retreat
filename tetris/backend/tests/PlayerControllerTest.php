@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 
-class PlayerTest extends WebTestCase
+class PlayerControllerTest extends WebTestCase
 {
 
     public function testSetPlayer()

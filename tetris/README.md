@@ -90,3 +90,4 @@ php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 ````
 
+NOTA: El proyecto tiene instalada la libreria [Doctrine Test Bundle](https://github.com/dmaicher/doctrine-test-bundle) que corre todas las pruebas dentro de una transacción y hace roll back al final; por lo tanto no es necesario preocuparse por reinicializar la base de datos en las pruebas de unidad.
